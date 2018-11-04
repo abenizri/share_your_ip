@@ -25,7 +25,6 @@ $(function() {
         img = 'images/toggle_on_a.png'
         toggle = true
       }
-      console.log(myIp)
       chrome.storage.sync.set({'toggleState': toggle})
       chrome.storage.sync.set({'ip': myIp})
       chrome.storage.sync.set({'toggle': img})
@@ -33,7 +32,7 @@ $(function() {
     //   xhttp.open("GET", "http://localhost:3000/user/109.186.238.61", true)
     //   xhttp.send();
 
-        xhttp.open("PUT", 'http://localhost:3000/update', true);
+        xhttp.open("PUT", 'http://18.222.193.152:3000/update', true);
         xhttp.setRequestHeader('Content-type','application/json; charset=utf-8');
         xhttp.send(JSON.stringify({ "ip": myIp, "status": toggle }));
   })
@@ -46,7 +45,6 @@ $(function() {
 
   let self = this
   $('.nav-link-img').click(function(){
-    console.log('here');
 
     // //chrome.storage.sync.get('toggle', function())
     // var src = $(this).attr('src')
