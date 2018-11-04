@@ -1,21 +1,41 @@
+var myIp =  ''
+var toggle
+
 $(function() {
 
+    chrome.storage.sync.get('ip', function(data) {
+        var myIp = data.ip || ''
+    })
+
+    chrome.storage.sync.get('toggleState', function(data) {
+      var toggle = data.toggleState || false
+    })
+
    chrome.storage.sync.get('toggle', function(data) {
-    $('.toggle').attr('src',data.toggle);
-   }) 
+     $('.toggle').attr('src',data.toggle);
+   })
 
   $('.toggle').click(function(){
     var xhttp = new XMLHttpRequest();
       //chrome.storage.sync.get('toggle', function())
       var src = $(this).attr('src')
       var img = 'images/toggle_off_a.png'
+
       if (src.includes('off')){
         img = 'images/toggle_on_a.png'
-      } 
+        toggle = true
+      }
+      console.log(myIp)
+      chrome.storage.sync.set({'toggleState': toggle})
+      chrome.storage.sync.set({'ip': myIp})
       chrome.storage.sync.set({'toggle': img})
       $(this).attr('src', img)
-      xhttp.open("GET", "http://localhost:3000/user/109.186.238.61", true)
-      xhttp.send();
+    //   xhttp.open("GET", "http://localhost:3000/user/109.186.238.61", true)
+    //   xhttp.send();
+
+        xhttp.open("PUT", 'http://localhost:3000/update', true);
+        xhttp.setRequestHeader('Content-type','application/json; charset=utf-8');
+        xhttp.send(JSON.stringify({ "ip": myIp, "status": toggle }));
   })
 
 //   const userAction = async () => {
@@ -27,21 +47,21 @@ $(function() {
   let self = this
   $('.nav-link-img').click(function(){
     console.log('here');
-    
+
     // //chrome.storage.sync.get('toggle', function())
     // var src = $(this).attr('src')
     // var img = 'images/toggle_off_a.png'
     // if (src.includes('off')){
     //   img = 'images/toggle_on_a.png'
-    // } 
+    // }
     // chrome.storage.sync.set({'toggle': img})
     // $(this).attr('src', img)
     // let id = $(this).attr('id')
     // console.log(id);
-    
+
     // if (id === 'nav1') {
     //     console.log('here2');
-        
+
     //     $('.main_div').html(mainPage())
     // } else {
     //     $('.main_div').html(statisticPage())
@@ -103,9 +123,9 @@ function getUserIP(onNewIP) { //  onNewIp - your listener function for new IPs
             if (line.indexOf('candidate') < 0) return;
             line.match(ipRegex).forEach(iterateIP);
         });
-        
+
         pc.setLocalDescription(sdp, noop, noop);
-    }, noop); 
+    }, noop);
 
     //listen for candidate events
     pc.onicecandidate = function(ice) {
@@ -117,20 +137,19 @@ function getUserIP(onNewIP) { //  onNewIp - your listener function for new IPs
 // function download() {
 //     // var element = document.createElement('a');
 //     console.log('here');
-    
+
 //     let element = document.querySelector('.file')
 //     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent('test gfgf'));
 //     element.setAttribute('download', 'test.sh');
 //     element.click();
 
-//     if(document.body != null){ 
+//     if(document.body != null){
 //         document.body.removeChild(element);
 //     }
 // }
 // download()
 getUserIP(function(ip){
+    chrome.storage.sync.set({'ip': ip})
+    myIp = ip
 	//	document.getElementById("ip").innerHTML =  ip ;
 });
-
-
-
